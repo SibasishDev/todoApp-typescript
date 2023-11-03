@@ -7,6 +7,8 @@ import bodyParser from "body-parser";
 
 import { config } from "./config/config";
 import { router } from "./routers/main.router";
+import {errorResponse} from "./middleware/response"
+import "./config/connection/mongodb.connection";
 
 class App {
     app : any;
@@ -22,13 +24,14 @@ class App {
     }
 
     addRoutesMiddlewares(app : any){
-        app.use(express.json(),express.urlencoded({extended : true}));
+        app.use(express.json(),express.urlencoded({extended : false}));
         app.use(morgan("dev"));
         app.use(cors());
         app.use(helmet());
         app.use(bodyParser.json());
 
         app.use("/api", router.getRouters());
+        app.use(errorResponse);
     }
 
     listenPort(app : any, port : number){
