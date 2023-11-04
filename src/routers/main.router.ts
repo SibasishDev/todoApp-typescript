@@ -1,6 +1,7 @@
 
 import { Router, Request, Response} from "express";
 import { errorResponse } from "../middleware/response";
+import {authRouter} from "../controllers/auth/auth.router"
 
 class mainRouter {
     router : any;
@@ -10,7 +11,15 @@ class mainRouter {
     }
 
     init(){
-        this.router.use(errorResponse);
+    
+        this.router.use("/",authRouter.getRouters());
+
+        this.router.use("*", (req : Request, res : Response) => {
+           return res.status(404).json({
+                code : 404,
+                message : "Not Found"
+            })
+        });
     }
 
     getRouters(){
