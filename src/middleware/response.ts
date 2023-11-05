@@ -8,4 +8,13 @@ export const errorResponse = (error: any, req: any, res: Response, next: any) =>
     })
 }
 
-export const successResponse = (res :Response, status : number, message : string, data : any) => res.status(status).json({code : status, message : message, data : data});
+export const successResponse = (res :Response, status : number, message : string, data : any = null) => {
+    const responseData : any = {
+        code : status,
+        message : message
+    };
+
+    if(data) responseData.data = data;
+    
+    res.status(status).json(responseData);
+};

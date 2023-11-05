@@ -8,7 +8,8 @@ import bodyParser from "body-parser";
 import { config } from "./config/config";
 import { router } from "./routers/main.router";
 import {errorResponse} from "./middleware/response"
-import "./config/connection/mongodb.connection";
+import {mongoDB} from  "./config/connection/mongodb.connection";
+
 
 class App {
     app : any;
@@ -29,6 +30,8 @@ class App {
         app.use(cors());
         app.use(helmet());
         app.use(bodyParser.json());
+        //mongoDB connection
+        mongoDB.connect();
 
         app.use("/api", router.getRouters());
         app.use(errorResponse);

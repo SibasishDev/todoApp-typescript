@@ -11,6 +11,7 @@ class AuthRouter {
 
     init(){
         this.router.post("/login", authController.login);
+        this.router.post("/register", authController.register);
 
     }
 
