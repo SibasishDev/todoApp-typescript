@@ -117,6 +117,7 @@ class AuthController {
         name: user.name,
         userName: user.username,
         mobile_no: user.phoneNo,
+        role : value.role
       };
 
       return successResponse(res, 201, "User created successfully", data);

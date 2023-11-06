@@ -6,7 +6,7 @@ interface UserDocument extends Document {
   username : string;
   password: string;
   phoneNo: number;
-  role : string;
+  role : number;
   profileImage : string;
   createdAt: Date;
 }
@@ -35,13 +35,14 @@ const UserSchema = new Schema<UserDocument>({
     type: String,
   },
   role: {
-    type: String,
-    enum: ['user', 'admin', 'seller'],
-    default: 'user'
+    type: Number,
+    enum: [1,2,3],
+    default: 'user',
+    description: 'User role: 1 for admin, 2 for user, 3 for seller'
   },
   profileImage: {
     type: String,
-    required: true
+    required: false
   },
   createdAt: {
     type: Date,

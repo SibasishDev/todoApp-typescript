@@ -1,12 +1,13 @@
+import { boolean } from "joi";
 import mongoose, { Document, Schema, Model, Types } from "mongoose";
 
 interface ProductDocument extends Document {
   name: string;
   slug: string;
-  mainImage: string;
-  mainImageId: string;
-  images: string[];
-  imagesId: string[];
+  // mainImage: string;
+  // mainImageId: string;
+  productImage: string;
+  // imagesId: string[];
   description: string;
   category: Types.ObjectId;
   seller: Types.ObjectId;
@@ -29,26 +30,26 @@ const productSchema = new Schema<ProductDocument>({
           trim: true
         },
         slug: String,
-        mainImage: {
-          type: String,
-          required: [true, 'A product must have a main image']
-        },
-        mainImageId: String,
-        images: {
+        // mainImage: {
+        //   type: String,
+        //   required: [true, 'A product must have a main image']
+        // },
+        // mainImageId: String,
+        productImage: {
           type: [String],
           required: [true, 'A product must have sub images']
         },
-        imagesId: Array,
+        // imagesId: Array,
         description: {
           type: String,
           required: [true, 'A product must have a description']
         },
         category: {
-          type: Types.ObjectId,
+          type: mongoose.Types.ObjectId,
           ref: 'Category'
         },
         seller: {
-          type: Types.ObjectId,
+          type: mongoose.Types.ObjectId,
           ref: 'User'
         },
         price: {
@@ -61,16 +62,17 @@ const productSchema = new Schema<ProductDocument>({
           required: true,
           default: 0
         },
-        // priceDiscount: {
-        //   type: Number,
-        //   validate: {
-        //     validator: function (value : number) {
-        //       // this only points to current doc on NEW documnet creation
-        //       return value < this.price;
-        //     },
-        //     message: 'Discount price ({VALUE}) should be below regular price'
-        //   }
-        // },
+        priceDiscount: {
+          type: Number,
+          required: true,
+          default: 0
+    // validate: {
+      // validator: function (value: number) {
+      //   // 'this' refers to the current document
+      //   return value < this.price;
+      // },
+      // message: 'Discount price ({VALUE}) should be below regular price',
+        },
         // colors: [
         //   {
         //     type: mongoose.Types.ObjectId,

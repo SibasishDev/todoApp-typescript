@@ -14,10 +14,11 @@ class AuthValidation {
             email: Joi.string().email().min(4).max(100).required(),
             password: Joi.string().min(5).max(100).required(),
             name: Joi.string().max(250).min(3).required(),
-            userName: Joi.string().max(250).min(3).required(),
+            username: Joi.string().max(250).min(3).required(),
             // lastName: Joi.string().max(250).min(3).required(),
             phoneNo: Joi.number().required(),
-            repeatPassword: Joi.ref('password')
+            repeatPassword: Joi.ref('password'),
+            role : Joi.number().required()
             // dateOfBirth: Joi.date().iso().min('1980-01-01T00:00:00Z').max('2020-01-01T00:00:00Z').optional(),
             // type: Joi.string().valid(UserType.user, UserType.admin).optional().default(UserType.user),
         });
