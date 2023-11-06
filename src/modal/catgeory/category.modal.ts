@@ -4,7 +4,7 @@ interface ICategory {
     name : string;
     description : string;
     image : string;
-    imageId : string;
+    // imageId : string;
 
 }
 
@@ -22,10 +22,10 @@ const categorySchema = new Schema<ICategory>({
         type: String,
         required: true
       },
-      imageId: {
-        type: String,
-        required: true
-      }
+      // imageId: {
+      //   type: String,
+      //   required: true
+      // }
     },
     {
       timestamps: true

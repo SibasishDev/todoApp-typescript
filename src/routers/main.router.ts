@@ -4,6 +4,8 @@ import { errorResponse } from "../middleware/response";
 import {authRouter} from "../controllers/auth/auth.router";
 import { verifyAccessToken } from "../middleware/auth.middleware";
 import {userRouter} from "./user.route";
+import { productRouter } from "../controllers/product/product.router";
+import { categoryRouter } from "../controllers/category/category.router";
 
 class mainRouter {
     router : any;
@@ -19,6 +21,10 @@ class mainRouter {
         this.router.use(verifyAccessToken);
 
         this.router.use("/user", userRouter.getRouters());
+
+        this.router.use("/product", productRouter.getRouters());
+
+        this.router.use("/category", categoryRouter.getRouters());
 
         this.router.use("*", (req : Request, res : Response) => {
            return res.status(404).json({
