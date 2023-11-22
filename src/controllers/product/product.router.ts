@@ -11,6 +11,10 @@ class ProductRouter {
 
     init(){
         this.router.post("/create-product",singleFile("file"), productController.createProduct);
+        this.router.get("/get-all-products", productController.getAllProducts);
+        this.router.get("/get-product-by-id", productController.getProductById);
+        this.router.put("/update-product", productController.updatePoductDetails);
+        this.router.put("/update-product-image", singleFile("file"), productController.updateProductImages);
     }
 
     getRouters(){

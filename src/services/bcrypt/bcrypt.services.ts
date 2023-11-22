@@ -13,7 +13,9 @@ class BcryptService {
      * @returns 
      */
     encryptPassword(password: string) {
-        return bcrypt.hash(password, this.saltRounds);
+        return new Promise((resolve,reject) => {
+            bcrypt.hash(password,this.saltRounds).then(hash => resolve(hash)).catch(err => reject("Internal server error"));
+        })
     }
 
     /**
@@ -21,8 +23,8 @@ class BcryptService {
      * @param data 
      * @returns 
      */
-    decryptPassword(password: string, hash: string) {
-        return bcrypt.compare(password, hash);
+   async decryptPassword(password: string, hash: string) {
+        return await bcrypt.compare(password, hash);
     }
 }
 

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { CategorySchema } from "../../modal/catgeory/category.modal";
 import { categoryValidation } from "./category.validation";
-import path from "path";
+import { uploadImageToBucket } from "../../utils/firebase/firebase-bucket";
 import { successResponse } from "../../middleware/response";
 
 interface CustomRequest extends Request {
@@ -22,9 +22,11 @@ class CategoryController {
 
             if(!req.file) return next({code : 400, message : "Please upload a image"});
 
-            const file = req.file?.path.replace(path.join(__dirname + "/../../")+"public", " ");
+            const filePath = await uploadImageToBucket(req.file,"category");
+
+            if(!filePath) return next({code : 400, message : "Error in uploading image to bucket"});
             
-            value.image = file;
+            value.image = filePath;
 
             const insertCategory = await CategorySchema.create(value);
 

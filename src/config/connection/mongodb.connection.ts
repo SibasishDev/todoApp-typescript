@@ -10,7 +10,7 @@ class MongoDB {
   async connect() {
     try {
       mongoose.set('strictQuery', false);
-      await mongoose.connect(config.MONGO_DB_URL, {
+      await mongoose.connect(this.MONGO_DB_URL, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true,

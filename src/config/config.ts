@@ -12,7 +12,7 @@ class Config {
         this.PORT = +process.env.PORT! || 8000;
         this.JWT_SECRET = process.env.JWT_SECRET || "$#@secret-key#$";
         this.JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || "$refresh-key@#";
-        this.MONGO_DB_URL = process.env.MONGO_DB_URL || "mongodb+srv://dassibasishdas:bFlnhMCuW7huM0sk@cluster0.ss6mjmw.mongodb.net/";
+        this.MONGO_DB_URL = process.env.MONGO_DB_URL || "mongodb+srv://dassibasishdas:bFlnhMCuW7huM0sk@cluster0.ss6mjmw.mongodb.net/ecommerce";
 
     }
 }
