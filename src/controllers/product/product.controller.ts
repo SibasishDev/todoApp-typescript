@@ -29,7 +29,7 @@ class ProductController {
 
             let priceAfterDiscount = +value.price;
 
-            if (value.priceDiscount) priceAfterDiscount = +value.price - (+(value.price) / 100) * +value.priceDiscount;
+            if (value.priceDiscount) priceAfterDiscount = +value.price - (+(value.priceDiscount / 100) * +value.price);
 
             const createProducts = await ProductSchema.create({
                 name: value.name,
@@ -114,7 +114,7 @@ class ProductController {
     updatePoductDetails = async (req: CustomRequest, res: Response, next: NextFunction): Promise<any> => {
         try {
 
-            const { productId, name, description, category, price, priceDiscount, quantity, sold, isOutOfStock } = req.body as Partial<any>;
+            const { productId, name, description, category, price, priceDiscount, quantity, sold, isOutOfStock, ratingsAverage, ratingsQuantity } = req.body as Partial<any>;
 
             if (!productId) return next({ code: 400, message: "productId required" });
 
@@ -136,7 +136,7 @@ class ProductController {
 
             if (priceDiscount) {
                 data.priceDiscount = +priceDiscount;
-                data.priceAfterDiscount = +productData.price - (+(productData.price) / 100) * +priceDiscount;
+                data.priceAfterDiscount = +productData.price - (+priceDiscount / 100) * +productData.price;
             }
 
             if (quantity) data.quantity = +productData.quantity;
@@ -144,6 +144,10 @@ class ProductController {
             if (sold) data.sold = +productData.sold;
 
             if (isOutOfStock) data.isOutOfStock = isOutOfStock;
+
+            if (ratingsAverage) data.ratingsAverage = ratingsAverage;
+
+            if (ratingsQuantity) data.ratingsQuantity = +ratingsQuantity;
 
             const updateProduct = await ProductSchema.findByIdAndUpdate(productId, {
                 $set: data
@@ -183,13 +187,104 @@ class ProductController {
                     $set: { productImage: filePath }
                 }, { new: true });
 
-                if (!updateImagePath) return next({ code: 400, message: "Something went wrong" });
+            if (!updateImagePath) return next({ code: 400, message: "Something went wrong" });
 
-                successResponse(res,200,"Image updated successfully", updateImagePath);
+            successResponse(res, 200, "Image updated successfully", updateImagePath);
 
 
         } catch (e) {
             next(e);
+        }
+    }
+
+    top5Product = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+        try {
+
+            const limit = 5;
+
+            const productData = await ProductSchema.find().limit(limit).sort({ price: 1, ratingsAverage: -1 });
+
+            successResponse(res, 200, "Top 5 products", productData);
+
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    getProductStats = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+        try {
+
+            const productStats = await ProductSchema.aggregate([
+                {
+                    $match: { ratingsAverage: { $gte: 4.5 } }
+                },
+                {
+                    $group: {
+                        _id: "$category",
+                        numberOfProducts: { $sum: 1 },
+                        numberOfRatings: { $sum: "$ratingsQuantity" },
+                        averageOfRatings: { $avg: "$ratingsAverage" },
+                        averagePrice: { $avg: "$price" },
+                        minimumPrice: { $min: "$price" },
+                        maximumPrice: { $max: "$price" },
+                        totalQuantity: { $sum: "$quantity" }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "categories",
+                        localField: "_id",
+                        foreignField: "_id",
+                        as: "category"
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        numberOfProducts: 1,
+                        numberOfRatings: 1,
+                        averageOfRatings: 1,
+                        averagePrice: 1,
+                        minimumPrice: 1,
+                        maximumPrice: 1,
+                        totalQuantity: 1,
+                        category: { $arrayElemAt: ["$category.name", 0] }
+                    }
+                }
+            ]);
+
+            successResponse(res, 200, "Product stats fetch successfully", productStats);
+
+        } catch (e) {
+            console.log(e);
+            next(e);
+        }
+    }
+
+    deleteProduct = async (req : CustomRequest, res : Response, next : NextFunction) : Promise<any> => {
+        try{
+
+            const {productId} = req.body as Partial<any>;
+
+            if(!productId) return next({code : 400, message : "productId required"});
+
+            const checkExist = await ProductSchema.findById(productId);
+
+            if(!checkExist) return next({code : 404, message : "No product found"});
+
+            if(req.user.id !== checkExist.seller) return next({code : 403, message : "You are not authorise to delete product"});
+
+            const deleteProdutImage = await deleteImageFromBucket(checkExist.productImage);
+
+            const deleteProduct = await ProductSchema.deleteOne({_id : productId});
+
+            if (deleteProduct.deletedCount === 0)  return next({ code: 400, message: "Something went wrong" });
+
+            successResponse(res,200,"Product deleted successfully");
+    
+
+        }catch(e){
+            next();
         }
     }
 }

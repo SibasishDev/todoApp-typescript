@@ -6,49 +6,79 @@ import { successResponse } from "../../middleware/response";
 
 interface CustomRequest extends Request {
     user: any;
-  }
+}
 
 class CategoryController {
-    constructor () {
+    constructor() {
 
     }
 
-    createCategory = async (req: CustomRequest, res : Response, next : NextFunction) : Promise<any> => {
-        try{
+    createCategory = async (req: CustomRequest, res: Response, next: NextFunction): Promise<any> => {
+        try {
 
-            const {error,value} = categoryValidation.createCategory(req.body);
+            const { error, value } = categoryValidation.createCategory(req.body);
 
-            if(error) return next({code : 400, message : error.message});
+            if (error) return next({ code: 400, message: error.message });
 
-            if(!req.file) return next({code : 400, message : "Please upload a image"});
+            if (!req.file) return next({ code: 400, message: "Please upload a image" });
 
-            const filePath = await uploadImageToBucket(req.file,"category");
+            const filePath = await uploadImageToBucket(req.file, "category");
 
-            if(!filePath) return next({code : 400, message : "Error in uploading image to bucket"});
-            
+            if (!filePath) return next({ code: 400, message: "Error in uploading image to bucket" });
+
             value.image = filePath;
 
             const insertCategory = await CategorySchema.create(value);
 
-            if(!insertCategory) return next({code : 400, message : "Something went wrong"});
+            if (!insertCategory) return next({ code: 400, message: "Something went wrong" });
 
-            successResponse(res,201,"Category created successfully",insertCategory);
+            successResponse(res, 201, "Category created successfully", insertCategory);
 
-        }catch(e){
+        } catch (e) {
             next(e);
         }
     }
 
-    getAllcategory = async (req : CustomRequest, res : Response, next : NextFunction) : Promise<any> => {
-        try{
+    getAllcategory = async (req: CustomRequest, res: Response, next: NextFunction): Promise<any> => {
+        try {
 
-            const categories = await CategorySchema.find({},{_id : 1,name : 1,description: 1,image: 1});
-            
-            if(!categories.length) return next({code : 404, message : "No catgeory found"});
+            const categories = await CategorySchema.find({}, { _id: 1, name: 1, description: 1, image: 1 });
 
-            successResponse(res,200,"Category found",categories);
+            if (!categories.length) return next({ code: 404, message: "No catgeory found" });
 
-        }catch(e){
+            successResponse(res, 200, "Category found", categories);
+
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    updateCategory = async (req: CustomRequest, res: Response, next: NextFunction): Promise<any> => {
+        try {
+
+            const { categoryId, name, description } = req.body as Partial<any>;
+
+            if (!categoryId) return next({ code: 400, message: "categoryId required" });
+
+            const categoryExist = await CategorySchema.findById(categoryId);
+
+            if (!categoryExist) return next({ code: 404, message: "Category not found" });
+
+            const data: any = {};
+
+            if (name) data.name = name;
+
+            if (description) data.description = description;
+
+            const updateCategory = await CategorySchema.findByIdAndUpdate(categoryId, {
+                $set: data
+            }, { new: true });
+
+            if (!updateCategory) return next({ code: 400, message: "Something went wrong" });
+
+            successResponse(res, 200, "Category updated successfully", updateCategory);
+
+        } catch (e) {
             next(e);
         }
     }
