@@ -1,7 +1,7 @@
-import mongoose, { Document, Schema, Model } from "mongoose";
+import mongoose, { Document, Schema, Model, Types } from "mongoose";
 
 
-interface IUuid {
+interface IUuid extends Document {
     userId : string,
     uuid : any,
 }
@@ -24,4 +24,4 @@ const UuidSchema = new Schema<IUuid>({
     }]
 });
 
-export const Uuid : Model<IUuid & Document> = mongoose.model<IUuid & Document>("Uuid",UuidSchema);
+export const Uuid : Model<IUuid> = mongoose.model<IUuid>("Uuid",UuidSchema);

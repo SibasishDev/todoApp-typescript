@@ -87,9 +87,10 @@ class AuthController {
       return successResponse(res, 200, "login successfull", data);
 
     } catch (e) {
+      console.log(e);
       next(e);
     }
-  };
+  }
 
   register = async (
     req: Request,
@@ -117,14 +118,14 @@ class AuthController {
         name: user.name,
         userName: user.username,
         mobile_no: user.phoneNo,
-        role : value.role
+        role : +value.role
       };
 
       return successResponse(res, 201, "User created successfully", data);
     } catch (e) {
       next(e);
     }
-  };
+  }
 
 
   

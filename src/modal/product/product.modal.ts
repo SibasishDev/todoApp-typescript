@@ -1,4 +1,3 @@
-import { boolean } from "joi";
 import mongoose, { Document, Schema, Model, Types } from "mongoose";
 
 interface ProductDocument extends Document {
@@ -17,7 +16,7 @@ interface ProductDocument extends Document {
   colors: Types.ObjectId[];
   sizes: Types.ObjectId[];
   quantity: number;
-  sold: number;
+  sold: number
   isOutOfStock: boolean;
   ratingsAverage: number;
   ratingsQuantity: number;
