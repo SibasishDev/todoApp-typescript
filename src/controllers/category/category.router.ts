@@ -12,6 +12,8 @@ class CategoryRouter {
     init(){
         this.router.post("/create-category",singleFile("file"), categoryController.createCategory);
         this.router.get("/get-all-category", categoryController.getAllcategory);
+        this.router.put("/update-category", categoryController.updateCategory);
+        this.router.put("update-category-image",singleFile("file"), categoryController.updateCategoryImage);
     }
 
     getRouters(){

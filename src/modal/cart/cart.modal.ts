@@ -14,7 +14,7 @@ interface CartDocument extends Document{
     totalQuantity : number;
 }
 
-const CartSchema = new Schema<CartDocument>({
+const cartSchema = new Schema<CartDocument>({
     email: {
         type: String,
         required: true,
@@ -62,4 +62,4 @@ const CartSchema = new Schema<CartDocument>({
   { timestamps: true}
   );
 
-  export const cartSchema : Model<CartDocument> = mongoose.model<CartDocument>("Cart",CartSchema);
+  export const CartSchema : Model<CartDocument> = mongoose.model<CartDocument>("Cart",cartSchema);
