@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { CartSchema } from "../../modal/cart/cart.modal";
 import { ProductSchema } from "../../modal/product/product.modal";
 import { successResponse } from "../../middleware/response";
+import { CategorySchema } from "../../modal/catgeory/category.modal";
 
 interface CustomRequest extends Request {
     user: any;
@@ -74,7 +75,7 @@ class CartController {
 
                 }
                 else {
-                    
+
                     return next({ code: 400, message: "Invalid quantity" });
                 }
 
@@ -182,6 +183,42 @@ class CartController {
 
 
         } catch (e) {
+            next(e);
+        }
+    }
+
+    getCart = async (req: CustomRequest, res: Response, next: NextFunction): Promise<any> => {
+        try {
+
+            const { email } = req.user;
+
+            const cartData = await CategorySchema.findOne({ email });
+
+            if (!cartData) return next({ code: 404, message: "No cart found" });
+
+            successResponse(res, 200, "Cart found successfully", cartData);
+
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    deleteCart = async (req : CustomRequest, res  : Response, next : NextFunction) : Promise<any> => {
+        try{
+
+            const {email} = req.user;
+
+            const cart = await CartSchema.findOne({email});
+
+            if(!cart) return next({code : 404, message : "No cart found"});
+
+            const deleteCart = await CartSchema.deleteOne({email});
+
+            if(deleteCart.deletedCount == 0) return next({code : 400, message : "Something went wrong"});
+
+            successResponse(res,200,"Cart deleted successfully");
+
+        }catch(e){
             next(e);
         }
     }

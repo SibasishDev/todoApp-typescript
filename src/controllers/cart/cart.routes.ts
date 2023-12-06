@@ -13,6 +13,8 @@ class CartRoute {
     init(){
         this.router.post("/add-to-cart", cartController.addItemToCart);
         this.router.patch("/remove-item-from-cart", cartController.removeItemInCart);
+        this.router.get("/get-cart", cartController.getCart);
+        this.router.delete("/delete-cart", cartController.deleteCart);
     }
 
      getRouters() {

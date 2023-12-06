@@ -7,6 +7,7 @@ import {userRouter} from "./user.route";
 import { productRouter } from "../controllers/product/product.router";
 import { categoryRouter } from "../controllers/category/category.router";
 import { cartRouter } from "../controllers/cart/cart.routes";
+import { orderRouter } from "../controllers/order/order.route";
 
 class mainRouter {
     router : any;
@@ -28,6 +29,8 @@ class mainRouter {
         this.router.use("/category", categoryRouter.getRouters());
         
         this.router.use("/cart", cartRouter.getRouters());
+
+        this.router.use("/order", orderRouter.getRouters());
 
         this.router.use("*", (req : Request, res : Response) => {
            return res.status(404).json({
